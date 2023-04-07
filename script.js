@@ -96,6 +96,7 @@ function render() {
         for (let j = 0; j < post[`comments`].length; j++) {
             const author = post[`commentAuthor`][j];
             const comment = post[`comments`][j];
+            load(j);
 
             comments.innerHTML += `<div>${author}${comment}</div>`;
             
@@ -104,17 +105,30 @@ function render() {
 }
 
 function addComment(i) {
-    let input = document.getElementById(`new_comment${i}`);
-    posts[i]['comments'].push(input.value);
+    let input = document.getElementById(`new_comment${i}`).value;
+    posts[i]['comments'].push(input);
+    save(i);
     render();
-    input.value = '';
+    input = '';
+}
+
+function save(i) {
+    let saveComment = JSON.stringify(posts[i]['comments']);
+    localStorage.setItem(`post[${i}]`, saveComment);
+}
+
+function load(i) {
+    let saveComment = localStorage.getItem(`post[${i}]`);
+    if (saveComment) {
+        posts[i]['comments'] = JSON.parse(saveComment);
+    }
 }
 
 function addLike(i) {
     let heart = document.getElementById(`heartImg${i}`);
     let black = 'img/heart_fett.png';
     let red = 'img/heart_red.png';
-    let likes = document.getElementById(`like${i}`)
+    let likes = document.getElementById(`like${i}`);
 
     if (heart.getAttribute('src') === black) {
         heart.setAttribute('src', red);
